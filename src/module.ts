@@ -38,7 +38,7 @@ export const createBroker = <T extends IBrokerDefinition, U extends IWorkerDefin
 
                 ongoingRequests.delete(id);
 
-                if ((<IWorkerErrorMessage> message).error !== undefined) {
+                if ((<IWorkerErrorMessage> message).error === undefined) {
                     resolve((<IWorkerResultMessage> message).result);
                 } else {
                     reject(new Error((<IWorkerErrorMessage> message).error.message));
