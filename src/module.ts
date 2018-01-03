@@ -1,0 +1,72 @@
+import { generateUniqueNumber } from 'fast-unique-numbers';
+import { IWorkerDefinition } from 'worker-factory';
+import { extendBrokerImplementation } from './helpers/extend-broker-implementation';
+import { IBrokerDefinition, IDefaultBrokerDefinition, IWorkerEvent } from './interfaces';
+import { TBrokerImplementation } from './types';
+
+export * from './interfaces';
+export * from './types';
+
+const ONGOING_REQUESTS = new WeakMap<MessagePort | Worker, Map<number, { reject: Function, resolve: Function }>>();
+
+const createOrGetOngoingRequests = (sender: MessagePort | Worker): Map<number, { reject: Function, resolve: Function }> => {
+    if (ONGOING_REQUESTS.has(sender)) {
+        // @todo TypeScript needs to be convinced that has() works as expected.
+        return <Map<number, { reject: Function, resolve: Function }>> ONGOING_REQUESTS.get(sender);
+    }
+
+    const ongoingRequests: Map<number, { reject: Function, resolve: Function }> = new Map();
+
+    ONGOING_REQUESTS.set(sender, ongoingRequests);
+
+    return ongoingRequests;
+};
+
+export const createBroker = <T extends IBrokerDefinition, U extends IWorkerDefinition>(
+    brokerImplementation: TBrokerImplementation<T, U>
+): (sender: MessagePort | Worker) => T & IDefaultBrokerDefinition => {
+    const fullBrokerImplementation = extendBrokerImplementation(brokerImplementation);
+
+    return (sender: MessagePort | Worker) => {
+        const ongoingRequests = createOrGetOngoingRequests(sender);
+
+        sender.addEventListener('message', ({ data: { error, id, result } }: IWorkerEvent) => {
+            if (id !== null && ongoingRequests.has(id)) {
+                const { reject, resolve } = <{ reject: Function, resolve: Function }> ongoingRequests.get(id);
+
+                ongoingRequests.delete(id);
+
+                if (error === null) {
+                    resolve(result);
+                } else {
+                    reject(new Error(error.message));
+                }
+            }
+        });
+
+        const call = <V extends keyof U>(
+            method: V, params: U[V]['params'], transferables: U[V]['transferables'] = [ ]
+        ) => {
+            return new Promise<U[V]['response']['result']>((resolve, reject) => {
+                const id = generateUniqueNumber(ongoingRequests);
+
+                ongoingRequests.set(id, { reject, resolve });
+
+                sender.postMessage({ id, method, params }, transferables);
+            });
+        };
+        const notify = <V extends keyof U>(
+            method: V, params: U[V]['params'], transferables: U[V]['transferables'] = [ ]
+        ) => {
+            sender.postMessage({ id: null, method, params }, transferables);
+        };
+
+        let functions: object = { };
+
+        for (const [ key, handler ] of Object.entries(fullBrokerImplementation)) {
+            functions = { ...functions, [ key ]: handler({ call, notify }) };
+        }
+
+        return <T & IDefaultBrokerDefinition> { ...functions };
+    };
+};
