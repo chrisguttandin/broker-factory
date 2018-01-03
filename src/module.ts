@@ -1,5 +1,5 @@
 import { generateUniqueNumber } from 'fast-unique-numbers';
-import { IWorkerDefinition } from 'worker-factory';
+import { IWorkerDefinition, IWorkerErrorMessage, IWorkerResultMessage } from 'worker-factory';
 import { extendBrokerImplementation } from './helpers/extend-broker-implementation';
 import { IBrokerDefinition, IDefaultBrokerDefinition, IWorkerEvent } from './interfaces';
 import { TBrokerImplementation } from './types';
@@ -30,16 +30,18 @@ export const createBroker = <T extends IBrokerDefinition, U extends IWorkerDefin
     return (sender: MessagePort | Worker) => {
         const ongoingRequests = createOrGetOngoingRequests(sender);
 
-        sender.addEventListener('message', ({ data: { error, id, result } }: IWorkerEvent) => {
+        sender.addEventListener('message', ({ data: message }: IWorkerEvent) => {
+            const { id } = message;
+
             if (id !== null && ongoingRequests.has(id)) {
                 const { reject, resolve } = <{ reject: Function, resolve: Function }> ongoingRequests.get(id);
 
                 ongoingRequests.delete(id);
 
-                if (error === null) {
-                    resolve(result);
+                if ((<IWorkerErrorMessage> message).error !== undefined) {
+                    resolve((<IWorkerResultMessage> message).result);
                 } else {
-                    reject(new Error(error.message));
+                    reject(new Error((<IWorkerErrorMessage> message).error.message));
                 }
             }
         });

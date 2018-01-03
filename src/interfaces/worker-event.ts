@@ -1,7 +1,7 @@
-import { IWorkerMessage } from 'worker-factory';
+import { TWorkerMessage } from 'worker-factory';
 
 export interface IWorkerEvent extends Event {
 
-    data: IWorkerMessage;
+    data: TWorkerMessage;
 
 }
