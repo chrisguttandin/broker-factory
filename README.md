@@ -1,5 +1,7 @@
 # broker-factory
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/chrisguttandin/broker-factory.svg)](https://greenkeeper.io/)
+
 **A little factory function to create a broker for a JSON-RPC based Web Worker.**
 
 [![tests](https://img.shields.io/travis/chrisguttandin/broker-factory/master.svg?style=flat-square)](https://travis-ci.org/chrisguttandin/broker-factory)
