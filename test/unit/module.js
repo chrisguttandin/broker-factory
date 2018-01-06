@@ -1,3 +1,4 @@
+import { PORT_MAP } from '../../src/helpers/port-map';
 import { createBroker } from '../../src/module';
 
 describe('module', () => {
@@ -97,11 +98,15 @@ describe('module', () => {
     describe('disconnect()', () => {
 
         let port;
+        let portId;
 
         beforeEach(() => {
             const messageChannel = new MessageChannel();
 
             port = messageChannel.port1;
+            portId = 12;
+
+            PORT_MAP.set(messageChannel.port1, portId);
         });
 
         it('should send the correct message', function (done) {
@@ -110,14 +115,10 @@ describe('module', () => {
             Worker.addEventListener(0, 'message', ({ data }) => {
                 expect(data.id).to.be.a('number');
 
-                expect(data.params.port).to.be.an.instanceOf(MessagePort);
-
                 expect(data).to.deep.equal({
                     id: data.id,
                     method: 'disconnect',
-                    params: {
-                        port: data.params.port
-                    }
+                    params: { portId }
                 });
 
                 done();
