@@ -30,7 +30,7 @@ export const createBroker = <T extends IBrokerDefinition, U extends IWorkerDefin
     return (sender: MessagePort | Worker) => {
         const ongoingRequests = createOrGetOngoingRequests(sender);
 
-        sender.addEventListener('message', ({ data: message }: IWorkerEvent) => {
+        sender.addEventListener('message', <EventListener> (({ data: message }: IWorkerEvent) => {
             const { id } = message;
 
             if (id !== null && ongoingRequests.has(id)) {
@@ -44,7 +44,7 @@ export const createBroker = <T extends IBrokerDefinition, U extends IWorkerDefin
                     reject(new Error((<IWorkerErrorMessage> message).error.message));
                 }
             }
-        });
+        }));
 
         const call = <V extends keyof U>(
             method: V, params: U[V]['params'], transferables: U[V]['transferables'] = [ ]
