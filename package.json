@@ -7,7 +7,7 @@
     "babel-runtime": "^6.26.0",
     "fast-unique-numbers": "^1.1.3",
     "tslib": "^1.9.0",
-    "worker-factory": "^2.2.0"
+    "worker-factory": "^2.2.1"
   },
   "description": "A little factory function to create a broker for a JSON-RPC based Web Worker.",
   "devDependencies": {
@@ -38,9 +38,9 @@
     "karma-webpack": "^2.0.9",
     "load-grunt-config": "^0.19.2",
     "mocha": "^5.0.1",
-    "rollup": "^0.56.2",
+    "rollup": "^0.56.3",
     "rollup-plugin-babel": "^3.0.3",
-    "sinon": "^4.4.1",
+    "sinon": "^4.4.2",
     "sinon-chai": "^2.14.0",
     "ts-loader": "^3.5.0",
     "tsconfig-holy-grail": "^4.0.0",
@@ -70,5 +70,5 @@
     "test": "grunt lint && grunt test"
   },
   "types": "build/es2015/module.d.ts",
-  "version": "1.2.10"
+  "version": "1.2.11"
 }
