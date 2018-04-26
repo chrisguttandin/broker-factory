@@ -1,5 +1,6 @@
 import { generateUniqueNumber } from 'fast-unique-numbers';
 import { IWorkerDefinition, IWorkerErrorMessage, IWorkerResultMessage } from 'worker-factory';
+import { isMessagePort } from './guards/message-port';
 import { extendBrokerImplementation } from './helpers/extend-broker-implementation';
 import { IBrokerDefinition, IDefaultBrokerDefinition, IWorkerEvent } from './interfaces';
 import { TBrokerImplementation } from './types';
@@ -45,6 +46,10 @@ export const createBroker = <T extends IBrokerDefinition, U extends IWorkerDefin
                 }
             }
         }));
+
+        if (isMessagePort(sender)) {
+            sender.start();
+        }
 
         const call = <V extends keyof U>(
             method: V, params: U[V]['params'], transferables: U[V]['transferables'] = [ ]
