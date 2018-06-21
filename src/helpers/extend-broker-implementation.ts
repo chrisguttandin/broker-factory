@@ -6,8 +6,9 @@ import { PORT_MAP } from './port-map';
 export const extendBrokerImplementation = <T extends IBrokerDefinition, U extends IWorkerDefinition>(
     partialBrokerImplementation: TBrokerImplementation<T, U>
 ): TBrokerImplementation<T & IDefaultBrokerDefinition, U> => {
-    // @todo The spread operator can't be used here because TypeScript does not believe that partialBrokerImplementation is an object.
-    return Object.assign({ }, partialBrokerImplementation, <TBrokerImplementation<IDefaultBrokerDefinition, U>> {
+    return <TBrokerImplementation<T & IDefaultBrokerDefinition, U>> {
+        // @todo TypeScript does not believe that partialBrokerImplementation is an object.
+        ...(partialBrokerImplementation as object),
         connect: ({ call }) => {
             return async (): Promise<MessagePort> => {
                 const { port1, port2 } = new MessageChannel();
@@ -30,5 +31,5 @@ export const extendBrokerImplementation = <T extends IBrokerDefinition, U extend
                 await call('disconnect', { portId });
             };
         }
-    });
+    };
 };
