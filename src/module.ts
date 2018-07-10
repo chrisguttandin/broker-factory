@@ -52,14 +52,18 @@ export const createBroker = <T extends IBrokerDefinition, U extends IWorkerDefin
         }
 
         const call = <V extends keyof U>(
-            method: V, params: U[V]['params'], transferables: U[V]['transferables'] = [ ]
+            method: V, params: U[V]['params'] = null, transferables: U[V]['transferables'] = [ ]
         ) => {
             return new Promise<U[V]['response']['result']>((resolve, reject) => {
                 const id = generateUniqueNumber(ongoingRequests);
 
                 ongoingRequests.set(id, { reject, resolve });
 
-                sender.postMessage({ id, method, params }, transferables);
+                if (params === null) {
+                    sender.postMessage({ id, method }, transferables);
+                } else {
+                    sender.postMessage({ id, method, params }, transferables);
+                }
             });
         };
         const notify = <V extends keyof U>(
