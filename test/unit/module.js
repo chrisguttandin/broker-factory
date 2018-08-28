@@ -165,7 +165,10 @@ describe('module', () => {
                     }
                 });`
             ], { type: 'application/javascript' });
-            const worker = new Worker(URL.createObjectURL(blob));
+            const url = URL.createObjectURL(blob);
+            const worker = new Worker(url);
+
+            URL.revokeObjectURL(url);
 
             ({ connect, disconnect } = createBroker({ })(worker));
         });
