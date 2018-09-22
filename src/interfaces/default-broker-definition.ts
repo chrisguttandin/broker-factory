@@ -6,4 +6,6 @@ export interface IDefaultBrokerDefinition extends IBrokerDefinition {
 
     disconnect (port: MessagePort): Promise<void>;
 
+    isSupported (): Promise<boolean>;
+
 }

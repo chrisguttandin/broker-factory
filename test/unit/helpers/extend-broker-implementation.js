@@ -12,7 +12,7 @@ describe('extendBrokerImplementation', () => {
         it('should return the default implementation', () => {
             const fullBrokerImplementation = extendBrokerImplementation({ });
 
-            expect(fullBrokerImplementation).to.have.keys([ 'connect', 'disconnect' ]);
+            expect(fullBrokerImplementation).to.have.keys([ 'connect', 'disconnect', 'isSupported' ]);
         });
 
     });
@@ -22,7 +22,7 @@ describe('extendBrokerImplementation', () => {
         it('should return the extended implementation', () => {
             const fullBrokerImplementation = extendBrokerImplementation({ subtract: () => {} });
 
-            expect(fullBrokerImplementation).to.have.keys([ 'connect', 'disconnect', 'subtract' ]);
+            expect(fullBrokerImplementation).to.have.keys([ 'connect', 'disconnect', 'isSupported', 'subtract' ]);
         });
 
     });

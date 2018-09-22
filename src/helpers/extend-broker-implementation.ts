@@ -30,6 +30,9 @@ export const extendBrokerImplementation = <T extends IBrokerDefinition, U extend
 
                 await call('disconnect', { portId });
             };
+        },
+        isSupported: ({ call }) => {
+            return () => call('isSupported');
         }
     };
 };

@@ -8,13 +8,14 @@ describe('module', () => {
         let addMessageEventListener;
         let connect;
         let disconnect;
+        let isSupported;
         let postMessage;
 
         beforeEach(() => {
             const messageChannel = new MessageChannel();
             const port = messageChannel.port1;
 
-            ({ connect, disconnect } = createBroker({ })(port));
+            ({ connect, disconnect, isSupported } = createBroker({ })(port));
 
             postMessage = (transformer) => {
                 messageChannel.port2.onmessage = ({ data }) => {
@@ -108,12 +109,44 @@ describe('module', () => {
 
         });
 
+        describe('isSupported()', () => {
+
+            beforeEach(() => {
+                postMessage(({ id }) => ({ id, result: true }));
+            });
+
+            it('should send the correct message', function (done) {
+                this.timeout(6000);
+
+                addMessageEventListener(({ data }) => {
+                    expect(data.id).to.be.a('number');
+
+                    expect(data).to.deep.equal({
+                        id: data.id,
+                        method: 'isSupported'
+                    });
+
+                    done();
+                });
+
+                isSupported();
+            });
+
+            it('should return true', async function () {
+                this.timeout(6000);
+
+                expect(await isSupported()).to.be.true;
+            });
+
+        });
+
     });
 
     describe('with a Worker', () => {
 
         let connect;
         let disconnect;
+        let isSupported;
 
         afterEach(() => {
             Worker.reset();
@@ -170,7 +203,7 @@ describe('module', () => {
 
             URL.revokeObjectURL(url);
 
-            ({ connect, disconnect } = createBroker({ })(worker));
+            ({ connect, disconnect, isSupported } = createBroker({ })(worker));
         });
 
         describe('connect()', () => {
@@ -229,6 +262,27 @@ describe('module', () => {
                 });
 
                 disconnect(port);
+            });
+
+        });
+
+        describe('isSupported()', () => {
+
+            it('should send the correct message', function (done) {
+                this.timeout(6000);
+
+                Worker.addEventListener(0, 'message', ({ data }) => {
+                    expect(data.id).to.be.a('number');
+
+                    expect(data).to.deep.equal({
+                        id: data.id,
+                        method: 'isSupported'
+                    });
+
+                    done();
+                });
+
+                isSupported();
             });
 
         });
