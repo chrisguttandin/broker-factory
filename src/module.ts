@@ -8,15 +8,15 @@ import { TBrokerImplementation } from './types';
 export * from './interfaces';
 export * from './types';
 
-const ONGOING_REQUESTS = new WeakMap<MessagePort | Worker, Map<number, { reject: Function, resolve: Function }>>();
+const ONGOING_REQUESTS = new WeakMap<MessagePort | Worker, Map<number, { reject: Function; resolve: Function }>>();
 
-const createOrGetOngoingRequests = (sender: MessagePort | Worker): Map<number, { reject: Function, resolve: Function }> => {
+const createOrGetOngoingRequests = (sender: MessagePort | Worker): Map<number, { reject: Function; resolve: Function }> => {
     if (ONGOING_REQUESTS.has(sender)) {
         // @todo TypeScript needs to be convinced that has() works as expected.
-        return <Map<number, { reject: Function, resolve: Function }>> ONGOING_REQUESTS.get(sender);
+        return <Map<number, { reject: Function; resolve: Function }>> ONGOING_REQUESTS.get(sender);
     }
 
-    const ongoingRequests: Map<number, { reject: Function, resolve: Function }> = new Map();
+    const ongoingRequests: Map<number, { reject: Function; resolve: Function }> = new Map();
 
     ONGOING_REQUESTS.set(sender, ongoingRequests);
 
@@ -35,7 +35,7 @@ export const createBroker = <T extends IBrokerDefinition, U extends IWorkerDefin
             const { id } = message;
 
             if (id !== null && ongoingRequests.has(id)) {
-                const { reject, resolve } = <{ reject: Function, resolve: Function }> ongoingRequests.get(id);
+                const { reject, resolve } = <{ reject: Function; resolve: Function }> ongoingRequests.get(id);
 
                 ongoingRequests.delete(id);
 
