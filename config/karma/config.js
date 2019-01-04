@@ -4,8 +4,6 @@ module.exports = (config) => {
 
     config.set({
 
-        concurrency: 2,
-
         files: [
             {
                 included: false,
@@ -91,7 +89,9 @@ module.exports = (config) => {
                 'FirefoxHeadless',
                 'FirefoxDeveloperHeadless',
                 'Safari'
-            ]
+            ],
+
+            concurrency: 2
 
         });
 
