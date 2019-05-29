@@ -60,16 +60,16 @@ export const createBroker = <T extends IBrokerDefinition, U extends IWorkerDefin
                 ongoingRequests.set(id, { reject, resolve });
 
                 if (params === null) {
-                    sender.postMessage({ id, method }, transferables);
+                    sender.postMessage({ id, method }, <Transferable[]> transferables);
                 } else {
-                    sender.postMessage({ id, method, params }, transferables);
+                    sender.postMessage({ id, method, params }, <Transferable[]> transferables);
                 }
             });
         };
         const notify = <V extends keyof U>(
             method: V, params: U[V]['params'], transferables: U[V]['transferables'] = [ ]
         ) => {
-            sender.postMessage({ id: null, method, params }, transferables);
+            sender.postMessage({ id: null, method, params }, <Transferable[]> transferables);
         };
 
         let functions: object = { };
