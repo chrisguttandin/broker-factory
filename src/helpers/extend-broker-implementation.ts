@@ -19,7 +19,7 @@ export const extendBrokerImplementation = <T extends IBrokerDefinition, U extend
         };
     },
     disconnect: ({ call }) => {
-        return async (port: MessagePort): Promise<void> => {
+        return async (port: MessagePort): Promise<void> => { // tslint:disable-line:invalid-void
             const portId = PORT_MAP.get(port);
 
             if (portId === undefined) {
