@@ -5,8 +5,12 @@ import { extendBrokerImplementation } from './helpers/extend-broker-implementati
 import { IBrokerDefinition, IDefaultBrokerDefinition, IWorkerEvent } from './interfaces';
 import { TBrokerImplementation } from './types';
 
-export * from './interfaces';
-export * from './types';
+/*
+ * @todo Explicitly referencing the barrel file seems to be necessary when enabling the
+ * isolatedModules compiler option.
+ */
+export * from './interfaces/index';
+export * from './types/index';
 
 const ONGOING_REQUESTS = new WeakMap<MessagePort | Worker, Map<number, { reject: Function; resolve: Function }>>();
 
