@@ -2,9 +2,7 @@ import { PORT_MAP } from '../../src/helpers/port-map';
 import { createBroker } from '../../src/module';
 
 describe('module', () => {
-
     describe('with a MessagePort', () => {
-
         let addMessageEventListener;
         let connect;
         let disconnect;
@@ -15,7 +13,7 @@ describe('module', () => {
             const messageChannel = new MessageChannel();
             const port = messageChannel.port1;
 
-            ({ connect, disconnect, isSupported } = createBroker({ })(port));
+            ({ connect, disconnect, isSupported } = createBroker({})(port));
 
             postMessage = (transformer) => {
                 messageChannel.port2.onmessage = ({ data }) => {
@@ -29,7 +27,6 @@ describe('module', () => {
         });
 
         describe('connect()', () => {
-
             beforeEach(() => {
                 postMessage(({ id }) => ({ id, result: 123 }));
             });
@@ -59,16 +56,13 @@ describe('module', () => {
             it('should return a MessagePort', function () {
                 this.timeout(6000);
 
-                return connect()
-                    .then((port) => {
-                        expect(port).to.be.an.instanceOf(MessagePort);
-                    });
+                return connect().then((port) => {
+                    expect(port).to.be.an.instanceOf(MessagePort);
+                });
             });
-
         });
 
         describe('disconnect()', () => {
-
             let port;
             let portId;
 
@@ -106,11 +100,9 @@ describe('module', () => {
 
                 expect(await disconnect(port)).to.be.undefined;
             });
-
         });
 
         describe('isSupported()', () => {
-
             beforeEach(() => {
                 postMessage(({ id }) => ({ id, result: true }));
             });
@@ -137,13 +129,10 @@ describe('module', () => {
 
                 expect(await isSupported()).to.be.true;
             });
-
         });
-
     });
 
     describe('with a Worker', () => {
-
         let connect;
         let disconnect;
         let isSupported;
@@ -153,12 +142,12 @@ describe('module', () => {
         });
 
         beforeEach(() => {
-            Worker = ((OriginalWorker) => { // eslint-disable-line no-global-assign
+            // eslint-disable-next-line no-global-assign
+            Worker = ((OriginalWorker) => {
                 const instances = [];
 
                 return class ExtendedWorker extends OriginalWorker {
-
-                    constructor (url) {
+                    constructor(url) {
                         super(url);
 
                         const addEventListener = this.addEventListener;
@@ -173,23 +162,24 @@ describe('module', () => {
                         instances.push(this);
                     }
 
-                    static addEventListener (index, ...args) {
+                    static addEventListener(index, ...args) {
                         return instances[index].addEventListener(index, ...args);
                     }
 
-                    static get instances () {
+                    static get instances() {
                         return instances;
                     }
 
-                    static reset () {
-                        Worker = OriginalWorker; // eslint-disable-line no-global-assign
+                    static reset() {
+                        // eslint-disable-next-line no-global-assign
+                        Worker = OriginalWorker;
                     }
-
                 };
             })(Worker);
 
-            const blob = new Blob([
-                `self.addEventListener('message', ({ data }) => {
+            const blob = new Blob(
+                [
+                    `self.addEventListener('message', ({ data }) => {
                     // The port needs to be send as a Transferable because it can't be cloned.
                     if (data.params !== undefined && data.params.port !== undefined) {
                         self.postMessage(data, [ data.params.port ]);
@@ -197,17 +187,18 @@ describe('module', () => {
                         self.postMessage(data);
                     }
                 });`
-            ], { type: 'application/javascript' });
+                ],
+                { type: 'application/javascript' }
+            );
             const url = URL.createObjectURL(blob);
             const worker = new Worker(url);
 
             URL.revokeObjectURL(url);
 
-            ({ connect, disconnect, isSupported } = createBroker({ })(worker));
+            ({ connect, disconnect, isSupported } = createBroker({})(worker));
         });
 
         describe('connect()', () => {
-
             it('should send the correct message', function (done) {
                 this.timeout(6000);
 
@@ -229,11 +220,9 @@ describe('module', () => {
 
                 connect();
             });
-
         });
 
         describe('disconnect()', () => {
-
             let port;
             let portId;
 
@@ -263,11 +252,9 @@ describe('module', () => {
 
                 disconnect(port);
             });
-
         });
 
         describe('isSupported()', () => {
-
             it('should send the correct message', function (done) {
                 this.timeout(6000);
 
@@ -284,9 +271,6 @@ describe('module', () => {
 
                 isSupported();
             });
-
         });
-
     });
-
 });

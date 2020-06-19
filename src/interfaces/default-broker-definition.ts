@@ -1,11 +1,9 @@
 import { IBrokerDefinition } from './broker-definition';
 
 export interface IDefaultBrokerDefinition extends IBrokerDefinition {
+    connect(): Promise<MessagePort>;
 
-    connect (): Promise<MessagePort>;
+    disconnect(port: MessagePort): Promise<void>;
 
-    disconnect (port: MessagePort): Promise<void>;
-
-    isSupported (): Promise<boolean>;
-
+    isSupported(): Promise<boolean>;
 }
