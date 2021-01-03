@@ -24,6 +24,7 @@ module.exports = (config) => {
         frameworks: ['leche', 'mocha', 'sinon-chai'],
 
         preprocessors: {
+            'src/**/!(*.d).ts': 'webpack',
             'test/unit/**/*.js': 'webpack'
         },
 
