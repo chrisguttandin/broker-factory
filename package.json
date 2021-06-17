@@ -11,7 +11,7 @@
     "dependencies": {
         "@babel/runtime": "^7.14.6",
         "fast-unique-numbers": "^6.0.3",
-        "tslib": "^2.2.0",
+        "tslib": "^2.3.0",
         "worker-factory": "^6.0.45"
     },
     "description": "A little factory function to create a broker for a JSON-RPC based Web Worker.",
