@@ -12,7 +12,7 @@
         "@babel/runtime": "^7.21.0",
         "fast-unique-numbers": "^8.0.0",
         "tslib": "^2.5.0",
-        "worker-factory": "^6.0.76"
+        "worker-factory": "^7.0.0"
     },
     "description": "A little factory function to create a broker for a JSON-RPC based Web Worker.",
     "devDependencies": {
