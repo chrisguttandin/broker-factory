@@ -16,7 +16,7 @@
     },
     "description": "A little factory function to create a broker for a JSON-RPC based Web Worker.",
     "devDependencies": {
-        "@babel/core": "^7.22.9",
+        "@babel/core": "^7.22.17",
         "@babel/plugin-external-helpers": "^7.22.5",
         "@babel/plugin-transform-runtime": "^7.22.9",
         "@babel/preset-env": "^7.22.9",
