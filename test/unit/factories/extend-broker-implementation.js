@@ -1,6 +1,12 @@
-import { extendBrokerImplementation } from '../../../src/helpers/extend-broker-implementation';
+import { createExtendBrokerImplementation } from '../../../src/factories/extend-broker-implementation';
 
 describe('extendBrokerImplementation', () => {
+    let extendBrokerImplementation;
+
+    beforeEach(() => {
+        extendBrokerImplementation = createExtendBrokerImplementation(new WeakMap());
+    });
+
     describe('without any additional implementation', () => {
         it('should return the default implementation', () => {
             const fullBrokerImplementation = extendBrokerImplementation({});

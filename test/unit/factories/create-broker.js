@@ -1,5 +1,8 @@
-import { PORT_MAP } from '../../src/helpers/port-map';
-import { createBroker } from '../../src/module';
+import { createBrokerFactory } from '../../../src/factories/create-broker';
+import { createCreateOrGetOngoingRequests } from '../../../src/factories/create-or-get-ongoing-requests';
+import { createExtendBrokerImplementation } from '../../../src/factories/extend-broker-implementation';
+import { generateUniqueNumber } from 'fast-unique-numbers';
+import { isMessagePort } from '../../../src/guards/message-port';
 
 describe('module', () => {
     describe('with a MessagePort', () => {
@@ -7,13 +10,21 @@ describe('module', () => {
         let connect;
         let disconnect;
         let isSupported;
+        let portMap;
         let postMessage;
 
         beforeEach(() => {
             const messageChannel = new MessageChannel();
             const port = messageChannel.port1;
 
-            ({ connect, disconnect, isSupported } = createBroker({})(port));
+            portMap = new WeakMap();
+
+            ({ connect, disconnect, isSupported } = createBrokerFactory(
+                createCreateOrGetOngoingRequests(new WeakMap()),
+                createExtendBrokerImplementation(portMap),
+                generateUniqueNumber,
+                isMessagePort
+            )({})(port));
 
             postMessage = (transformer) => {
                 messageChannel.port2.onmessage = ({ data }) => {
@@ -72,7 +83,7 @@ describe('module', () => {
                 port = messageChannel.port1;
                 portId = 12;
 
-                PORT_MAP.set(messageChannel.port1, portId);
+                portMap.set(messageChannel.port1, portId);
 
                 postMessage(({ id }) => ({ id, result: null }));
             });
@@ -136,6 +147,7 @@ describe('module', () => {
         let connect;
         let disconnect;
         let isSupported;
+        let portMap;
 
         afterEach(() => {
             Worker.reset();
@@ -195,7 +207,14 @@ describe('module', () => {
 
             URL.revokeObjectURL(url);
 
-            ({ connect, disconnect, isSupported } = createBroker({})(worker));
+            portMap = new WeakMap();
+
+            ({ connect, disconnect, isSupported } = createBrokerFactory(
+                createCreateOrGetOngoingRequests(new WeakMap()),
+                createExtendBrokerImplementation(portMap),
+                generateUniqueNumber,
+                isMessagePort
+            )({})(worker));
         });
 
         describe('connect()', () => {
@@ -232,7 +251,7 @@ describe('module', () => {
                 port = messageChannel.port1;
                 portId = 12;
 
-                PORT_MAP.set(messageChannel.port1, portId);
+                portMap.set(messageChannel.port1, portId);
             });
 
             it('should send the correct message', function (done) {
