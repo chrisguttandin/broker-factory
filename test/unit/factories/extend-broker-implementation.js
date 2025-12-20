@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { createExtendBrokerImplementation } from '../../../src/factories/extend-broker-implementation';
 
 describe('extendBrokerImplementation', () => {

@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createBrokerFactory } from '../../../src/factories/create-broker';
 import { createCreateOrGetOngoingRequests } from '../../../src/factories/create-or-get-ongoing-requests';
 import { createExtendBrokerImplementation } from '../../../src/factories/extend-broker-implementation';
@@ -42,8 +43,8 @@ describe('module', () => {
                 postMessage(({ id }) => ({ id, result: 123 }));
             });
 
-            it('should send the correct message', function (done) {
-                this.timeout(6000);
+            it('should send the correct message', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 addMessageEventListener(({ data }) => {
                     expect(data.id).to.be.a('number');
@@ -58,18 +59,16 @@ describe('module', () => {
                         }
                     });
 
-                    done();
+                    resolve();
                 });
 
                 connect();
+
+                return promise;
             });
 
-            it('should return a MessagePort', function () {
-                this.timeout(6000);
-
-                return connect().then((port) => {
-                    expect(port).to.be.an.instanceOf(MessagePort);
-                });
+            it('should return a MessagePort', async () => {
+                expect(await connect()).to.be.an.instanceOf(MessagePort);
             });
         });
 
@@ -88,8 +87,8 @@ describe('module', () => {
                 postMessage(({ id }) => ({ id, result: null }));
             });
 
-            it('should send the correct message', function (done) {
-                this.timeout(6000);
+            it('should send the correct message', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 addMessageEventListener(({ data }) => {
                     expect(data.id).to.be.a('number');
@@ -100,15 +99,15 @@ describe('module', () => {
                         params: { portId }
                     });
 
-                    done();
+                    resolve();
                 });
 
                 disconnect(port);
+
+                return promise;
             });
 
-            it('should return undefined', async function () {
-                this.timeout(6000);
-
+            it('should return undefined', async () => {
                 expect(await disconnect(port)).to.be.undefined;
             });
         });
@@ -118,8 +117,8 @@ describe('module', () => {
                 postMessage(({ id }) => ({ id, result: true }));
             });
 
-            it('should send the correct message', function (done) {
-                this.timeout(6000);
+            it('should send the correct message', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 addMessageEventListener(({ data }) => {
                     expect(data.id).to.be.a('number');
@@ -129,15 +128,15 @@ describe('module', () => {
                         method: 'isSupported'
                     });
 
-                    done();
+                    resolve();
                 });
 
                 isSupported();
+
+                return promise;
             });
 
-            it('should return true', async function () {
-                this.timeout(6000);
-
+            it('should return true', async () => {
                 expect(await isSupported()).to.be.true;
             });
         });
@@ -218,8 +217,8 @@ describe('module', () => {
         });
 
         describe('connect()', () => {
-            it('should send the correct message', function (done) {
-                this.timeout(6000);
+            it('should send the correct message', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 Worker.addEventListener(0, 'message', ({ data }) => {
                     expect(data.id).to.be.a('number');
@@ -234,10 +233,12 @@ describe('module', () => {
                         }
                     });
 
-                    done();
+                    resolve();
                 });
 
                 connect();
+
+                return promise;
             });
         });
 
@@ -254,8 +255,8 @@ describe('module', () => {
                 portMap.set(messageChannel.port1, portId);
             });
 
-            it('should send the correct message', function (done) {
-                this.timeout(6000);
+            it('should send the correct message', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 Worker.addEventListener(0, 'message', ({ data }) => {
                     expect(data.id).to.be.a('number');
@@ -266,16 +267,18 @@ describe('module', () => {
                         params: { portId }
                     });
 
-                    done();
+                    resolve();
                 });
 
                 disconnect(port);
+
+                return promise;
             });
         });
 
         describe('isSupported()', () => {
-            it('should send the correct message', function (done) {
-                this.timeout(6000);
+            it('should send the correct message', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 Worker.addEventListener(0, 'message', ({ data }) => {
                     expect(data.id).to.be.a('number');
@@ -285,10 +288,12 @@ describe('module', () => {
                         method: 'isSupported'
                     });
 
-                    done();
+                    resolve();
                 });
 
                 isSupported();
+
+                return promise;
             });
         });
     });
