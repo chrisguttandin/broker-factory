@@ -50,6 +50,7 @@
     "main": "build/es5/bundle.js",
     "module": "build/es2019/module.js",
     "name": "broker-factory",
+    "packageManager": "npm@12",
     "repository": {
         "type": "git",
         "url": "https://github.com/chrisguttandin/broker-factory.git"
